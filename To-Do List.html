@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Modern To-Do List</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      padding-top: 50px;
+    }
+
+    .container {
+      background: white;
+      width: 90%;
+      max-width: 500px;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #0072ff;
+    }
+
+    .input-section {
+      display: flex;
+      gap: 10px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 2px solid #0072ff;
+      border-radius: 8px;
+    }
+
+    button {
+      padding: 10px 15px;
+      background: #0072ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #005bb5;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    li {
+      background: #f1f1f1;
+      padding: 12px 10px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-section {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .history-title {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .history-section ul li {
+      background: #e0e0e0;
+      color: #666;
+      font-size: 14px;
+    }
+
+    .history-toggle {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .complete {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    .btn-group button {
+      margin-left: 5px;
+      background-color: #ccc;
+      color: black;
+    }
+
+    .btn-group button:hover {
+      background-color: #bbb;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>My To-Do List</h2>
+  <div class="input-section">
+    <input type="text" id="taskInput" placeholder="Enter a new task...">
+    <button onclick="addTask()">Add</button>
+  </div>
+
+  <ul id="taskList"></ul>
+
+  <div class="history-toggle">
+    <button onclick="toggleHistory()">Toggle History</button>
+  </div>
+
+  <div class="history-section" id="historySection">
+    <div class="history-title">Completed/Deleted Tasks:</div>
+    <ul id="historyList"></ul>
+  </div>
+</div>
+
+<script>
+  const taskInput = document.getElementById('taskInput');
+  const taskList = document.getElementById('taskList');
+  const historyList = document.getElementById('historyList');
+  const historySection = document.getElementById('historySection');
+  let history = [];
+
+  function addTask() {
+    const taskText = taskInput.value.trim();
+    if (taskText === '') return;
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <span>${taskText}</span>
+      <div class="btn-group">
+        <button onclick="completeTask(this)">✔</button>
+        <button onclick="deleteTask(this)">✖</button>
+      </div>
+    `;
+    taskList.appendChild(li);
+    taskInput.value = '';
+  }
+
+  function deleteTask(button) {
+    const li = button.closest('li');
+    const taskText = li.querySelector('span').textContent;
+    history.push(`Deleted: ${taskText}`);
+    li.remove();
+    updateHistory();
+  }
+
+  function completeTask(button) {
+    const li = button.closest('li');
+    const taskText = li.querySelector('span').textContent;
+    history.push(`Completed: ${taskText}`);
+    li.remove();
+    updateHistory();
+  }
+
+  function updateHistory() {
+    historyList.innerHTML = '';
+    history.slice().reverse().forEach(item => {
+      const li = document.createElement('li');
+      li.textContent = item;
+      historyList.appendChild(li);
+    });
+  }
+
+  function toggleHistory() {
+    historySection.style.display = historySection.style.display === 'block' ? 'none' : 'block';
+  }
+
+  // Enter key adds task
+  taskInput.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      addTask();
+    }
+  });
+</script>
+
+</body>
+</html>
